@@ -14,6 +14,19 @@ const EditModal = ({ isOpen, onClose, contact }) => {
   const dispatch = useDispatch();
 
   const handleSave = () => {
+    if (!firstName || !lastName || !mobileNumber || !email) {
+      setError("All fields are required");
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+    if (!isValidPhoneNumber(mobileNumber)) {
+      setError("Please enter 11 digits valid mobile number");
+      return;
+    }
+
     const editedContact = {
       ...contact,
       firstName: editedFirstName,
@@ -26,10 +39,21 @@ const EditModal = ({ isOpen, onClose, contact }) => {
     onClose();
   };
 
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const isValidPhoneNumber = (phoneNumber) => {
+    const phoneNumberRegex = /^\d{11}$/;
+    return phoneNumberRegex.test(phoneNumber);
+  };
+
   return (
     <div className={`modal ${isOpen ? "open" : ""}`}>
       <div className="modal-content">
         <h2>Edit Contact</h2>
+        <div className="error">{error}</div>
         <input
           type="text"
           value={editedFirstName}

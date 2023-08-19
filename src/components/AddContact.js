@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addContact } from "../redux/actions";
 
@@ -8,10 +8,24 @@ function AddContact() {
   const [lastName, setLastName] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
 
   const dispatch = useDispatch();
 
   const handleSubmit = () => {
+    if (!firstName || !lastName || !mobileNumber || !email) {
+      setError("All fields are required");
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+    if (!isValidPhoneNumber(mobileNumber)) {
+      setError("Please enter 11 digits valid mobile number");
+      return;
+    }
+
     const newContact = {
       id: new Date().getTime(),
       firstName,
@@ -28,9 +42,20 @@ function AddContact() {
     setEmail("");
   };
 
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const isValidPhoneNumber = (phoneNumber) => {
+    const phoneNumberRegex = /^\d{11}$/;
+    return phoneNumberRegex.test(phoneNumber);
+  };
+
   return (
     <div>
       <h2>Add Contact</h2>
+      <div className="error">{error}</div>
       <input
         type="text"
         placeholder="First Name"
